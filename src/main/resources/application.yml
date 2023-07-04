@@ -1,0 +1,44 @@
+spring:
+  application:
+    name: API-GATEWAY
+  cloud:
+    discovery:
+      enabled: true
+    gateway:
+      discovery:
+        locator:
+          enabled: true
+          lower-case-service-id: true
+      routes:
+        - id: product-service
+          uri: lb://product-service
+          predicates:
+            - Path=/api/product
+            - Method=GET,POST
+        - id: order-service
+          uri: lb://order-service
+          predicates:
+            - Path=/api/order
+eureka:
+  client:
+    serviceUrl:
+      defaultZone: http://localhost:8761/eureka
+      #register eureka as application
+      register-with-eureka: true
+      #fetch all thing, we can get applications here
+      fetch-registry: true
+      #also you can specify the instance renewal time.
+      instance:
+        prefer-ip-address: true
+        instanceId: ${spring.application.name}:${random.value}
+logging:
+  level:
+    root: INFO
+    org:
+      springframework:
+        cloud:
+          gateway: TRACE
+          route:
+            RouteDefinitionLocator: INFO
+
+##Product Service Route Info
